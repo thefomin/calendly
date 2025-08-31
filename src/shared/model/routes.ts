@@ -3,7 +3,7 @@ import "react-router-dom";
 export const ROUTES = {
   HOME: "/",
   ORG: "/:org",
-  DATE: "/:org/:dateId",
+  DATE: "/:org/:eventId",
   SIGNIN: "/signin",
   SIGNUP: "/signup",
   MEET: "/:org/:time",
@@ -13,7 +13,7 @@ export const ROUTES = {
 export type PathParams = {
   [ROUTES.DATE]: {
     org: string;
-    dateId: string;
+    eventId: string;
   };
   [ROUTES.ORG]: {
     org: string;

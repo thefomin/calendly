@@ -15,7 +15,7 @@ const formDataSchema = z.object({
 
 type FormData = z.infer<typeof formDataSchema>;
 
-export const BookingForm = () => {
+export const EventForm = () => {
   const [userFormData, setFormData] = useState<Partial<FormData>>({});
   const [showErrors, setShowErrors] = useState(false);
   const formData = { ...initialFormState, ...userFormData };

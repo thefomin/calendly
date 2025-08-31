@@ -6,7 +6,7 @@ import { ru } from "date-fns/locale";
 import { DateList } from ".";
 import { format } from "date-fns";
 
-export const BookingDatePicker = () => {
+export const EventDatePicker = () => {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const { handleSelectDate, date, month, setMonth, today } =

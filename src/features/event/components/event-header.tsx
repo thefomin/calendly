@@ -7,7 +7,7 @@ import {
 } from "@/shared/ui/kit";
 import { Link, useParams } from "react-router-dom";
 
-export const BookingHeader = () => {
+export const EventHeader = () => {
   const params = useParams<PathParams[typeof ROUTES.DATE]>();
   return (
     <div className="h-full py-6 flex-1 basis-0">

@@ -17,11 +17,11 @@ export const router = createBrowserRouter([
         children: [
           {
             path: ROUTES.ORG,
-            lazy: () => import("@/features/booking/pages/dates.page"),
+            lazy: () => import("@/features/event/pages/event.page"),
           },
           {
             path: ROUTES.DATE,
-            lazy: () => import("@/features/booking/pages/date-id.page"),
+            lazy: () => import("@/features/event/pages/event-id.page"),
           },
           //   {
           //     path: ROUTES.RECENT_BOARDS,

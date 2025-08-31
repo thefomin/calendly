@@ -6,7 +6,7 @@ interface BookingProps {
   title: string;
 }
 
-export const BookingLayout = ({ header, children, title }: BookingProps) => {
+export const EventLayout = ({ header, children, title }: BookingProps) => {
   return (
     <div className="container mx-auto p-4 justify-center flex items-center h-full">
       <Card className="flex flex-row border-none rounded-lg max-w-[1060px] min-w-[900px] min-h-[550px] p-0">
