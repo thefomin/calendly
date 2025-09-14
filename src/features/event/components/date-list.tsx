@@ -16,13 +16,21 @@ export const DateList = ({ time, date, expanded, onExpand }: DateListProps) => {
 
   let to = "";
   if (date && time && org) {
-    const [hours, minutes] = time.split(":").map(Number);
-    const dateTime = new Date(date);
-    dateTime.setHours(hours);
-    dateTime.setMinutes(minutes);
+    // создаем дату в UTC
+    const utcDate = new Date(
+      Date.UTC(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate(),
+        0, // часы
+        0, // минуты
+        0, // секунды
+        0, // миллисекунды
+      ),
+    );
 
-    const dateId = dateTime.toISOString(); // 👈 твой dateId
-    to = `/${org}/${dateId}?${searchParams.toString()}`;
+    const dateId = utcDate.toISOString(); // будет 2025-09-28T00:00:00.000Z
+    to = `/${org}/${dateId}?${searchParams.toString()}&time=${time}`;
   }
 
   console.log({ date, time, org, to });

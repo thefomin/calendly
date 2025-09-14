@@ -3,24 +3,24 @@ import { AvailabilitiesDto } from "../types";
 
 class AvailabilitiesService {
   public async getAll() {
-    const response = await api.get<AvailabilitiesDto>(`/availabilities`);
+    const response = await api.get<AvailabilitiesDto>(`availabilities`);
     return response;
   }
-  public async getById(id: string) {
-    const response = await api.get<AvailabilitiesDto>(`/availabilities/${id}`);
+  public async getById(date: string) {
+    const response = await api.get<AvailabilitiesDto>(`availabilities/${date}`);
     return response;
   }
-  public async create() {
-    const response = await api.post<AvailabilitiesDto>(`/availabilities`);
+  public async create(body: AvailabilitiesDto) {
+    const response = await api.post<AvailabilitiesDto>(`availabilities`, body);
     return response;
   }
-  public async update() {
-    const response = await api.patch<AvailabilitiesDto>(`/availabilities`);
+  public async update(body: AvailabilitiesDto) {
+    const response = await api.patch<AvailabilitiesDto>(`availabilities`, body);
     return response;
   }
   public async delete(id: string) {
     const response = await api.delete<AvailabilitiesDto>(
-      `/availabilities/${id}`,
+      `availabilities/${id}`,
     );
     return response;
   }

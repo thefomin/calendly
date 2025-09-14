@@ -1,22 +1,31 @@
 import { Calendar } from "@/shared/ui/kit";
 import { useState } from "react";
 import { useCalendarParams } from "../hooks";
-import { availableSlots } from "./data";
 import { ru } from "date-fns/locale";
 import { DateList } from ".";
 import { format } from "date-fns";
+import { AvailabilityStatus, EventDto } from "../types";
+import { useCapitalizeFirst } from "../hooks/use-capitalize-first";
 
-export const EventDatePicker = () => {
+export const EventDatePicker = ({ event }: { event: EventDto }) => {
   const [expanded, setExpanded] = useState<string | null>(null);
 
   const { handleSelectDate, date, month, setMonth, today } =
     useCalendarParams();
 
-  const availableDates = availableSlots.map((slot) => slot.date);
-  const capitalizeFirst = (str: string) =>
-    str.charAt(0).toUpperCase() + str.slice(1);
-  const selectedSlot = availableSlots.find(
-    (slot) => date && slot.date.toDateString() === date.toDateString(),
+  const availableDates = Array.from(
+    new Set(
+      event.availabilities
+        .filter((slot) => slot.status === AvailabilityStatus.FREE)
+        .map((slot) => new Date(slot.date).toDateString()),
+    ),
+  ).map((d) => new Date(d));
+
+  const selectedSlots = event.availabilities.filter(
+    (slot) =>
+      date &&
+      new Date(slot.date).toDateString() === date.toDateString() &&
+      slot.status === AvailabilityStatus.FREE,
   );
 
   return (
@@ -54,17 +63,19 @@ export const EventDatePicker = () => {
       <div className="w-[45%] flex flex-col gap-3 text-base font-normal">
         <h3 className="leading-[38px] mb-2.5 normal-case">
           {date
-            ? capitalizeFirst(format(date, "EEEE, d MMMM", { locale: ru }))
+            ? useCapitalizeFirst(format(date, "EEEE, d MMMM", { locale: ru }))
             : "Выберите дату"}
         </h3>
 
-        {selectedSlot?.times.map((time) => (
+        {selectedSlots.map((slot) => (
           <DateList
-            key={time}
-            time={time}
-            date={selectedSlot.date}
-            expanded={expanded === time}
-            onExpand={() => setExpanded(expanded === time ? null : time)}
+            key={slot.id}
+            time={slot.time}
+            date={new Date(slot.date)}
+            expanded={expanded === slot.time}
+            onExpand={() =>
+              setExpanded(expanded === slot.time ? null : slot.time)
+            }
           />
         ))}
       </div>

@@ -3,11 +3,12 @@ import "react-router-dom";
 export const ROUTES = {
   HOME: "/",
   ORG: "/:org",
+  INVITEES: "/:org/invitees/:bookingId",
   DATE: "/:org/:eventId",
   SIGNIN: "/signin",
   SIGNUP: "/signup",
   MEET: "/:org/:time",
-  BOARD: "/boards/:boardId",
+  LK: "/l",
 } as const;
 
 export type PathParams = {
@@ -17,6 +18,10 @@ export type PathParams = {
   };
   [ROUTES.ORG]: {
     org: string;
+  };
+  [ROUTES.INVITEES]: {
+    org: string;
+    bookingId: string;
   };
 };
 

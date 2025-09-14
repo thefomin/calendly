@@ -1,102 +1,158 @@
-import { useState } from "react";
-import { z } from "zod";
-import { Button, Input, Label } from "@/shared/ui/kit";
-const initialFormState = {
-  name: "",
-  email: "",
-  phone: "",
-};
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Button,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  Input,
+  Label,
+} from "@/shared/ui/kit";
+import { CreateBookingSchema, TypeCreateBookingSchema } from "../schemes";
+import { useForm } from "react-hook-form";
+import { useCreate } from "../hooks/booking";
+import { AvailabilityStatus, EventDto } from "../types";
+import { useParams, useSearchParams } from "react-router-dom";
+import { PathParams, ROUTES } from "@/shared/model/routes";
 
-const formDataSchema = z.object({
-  name: z.string().min(3),
-  email: z.email(),
-  phone: z.string(),
-});
+export const EventForm = ({ event }: { event: EventDto }) => {
+  const [searchParams] = useSearchParams();
+  const params = useParams<PathParams[typeof ROUTES.DATE]>();
 
-type FormData = z.infer<typeof formDataSchema>;
+  const dateParam = searchParams.get("date");
+  const timeParam = searchParams.get("time") || "";
 
-export const EventForm = () => {
-  const [userFormData, setFormData] = useState<Partial<FormData>>({});
-  const [showErrors, setShowErrors] = useState(false);
-  const formData = { ...initialFormState, ...userFormData };
+  const selectedAvailability = event.availabilities.find(
+    (slot) =>
+      slot.date.slice(0, 10) === dateParam &&
+      slot.time === timeParam &&
+      slot.status === AvailabilityStatus.FREE,
+  );
 
-  const handleSubmit = (e: React.MouseEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const errors = validate();
-    if (errors) {
-      setShowErrors(true);
-    }
-    alert(JSON.stringify(userFormData, null, 2));
-    console.log(JSON.stringify(userFormData));
-    // await requestUserMutation.mutateAsync({
-    //     ...formData
-    // })
+  const availabilityId = selectedAvailability?.id;
+
+  const form = useForm<TypeCreateBookingSchema>({
+    resolver: zodResolver(CreateBookingSchema),
+    defaultValues: {
+      guestName: "",
+      guestEmail: "",
+      telegram: "",
+      phone: "",
+      date: params.eventId,
+      time: timeParam,
+      eventId: event.id,
+      availabilityId: availabilityId,
+      companyName: params.org,
+    },
+  });
+  const { create, isPending } = useCreate();
+
+  const onSubmit = (values: TypeCreateBookingSchema) => {
+    create(values);
   };
 
-  const validate = () => {
-    const res = formDataSchema.safeParse(formData);
-
-    if (res.success) {
-      return undefined;
-    }
-
-    return res.error.format;
-  };
-
-  const errors = showErrors ? validate() : undefined;
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-6 w-3/4">
-        <div className="flex flex-col gap-2">
-          <Label>Имя *</Label>
-          <Input
-            type="name"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, name: e.target.value }))
-            }
-            className="focus:ring-0 focus:ring-0 h-[40px] rounded-[8px]"
-            required
-          />
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit, (errors) => {
+          console.log("Validation errors:", errors);
+        })}
+      >
+        <div className="flex flex-col gap-6 w-3/4">
+          <div className="flex flex-col gap-2">
+            <FormField
+              control={form.control}
+              name="guestName"
+              render={({ field }) => (
+                <FormItem>
+                  <Label>Имя *</Label>
+                  <FormControl>
+                    <Input
+                      placeholder="Имя"
+                      type="text"
+                      disabled={isPending}
+                      {...field}
+                      className="focus:ring-0 focus:ring-0 h-[40px] rounded-[8px]"
+                      required
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="guestEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <Label>Почта *</Label>
+                  <FormControl>
+                    <Input
+                      placeholder="email"
+                      type="email"
+                      disabled={isPending}
+                      {...field}
+                      className="focus:ring-0 focus:ring-0 h-[40px] rounded-[8px]"
+                      required
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <div className="flex flex-col gap-2">
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <Label>Телефон *</Label>
+                  <FormControl>
+                    <Input
+                      placeholder="+79504373061"
+                      type="tel"
+                      disabled={isPending}
+                      {...field}
+                      className="focus:ring-0 focus:ring-0 h-[40px] rounded-[8px]"
+                      required
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="telegram"
+              render={({ field }) => (
+                <FormItem>
+                  <Label>Телеграм *</Label>
+                  <FormControl>
+                    <Input
+                      placeholder="Ссылка"
+                      type="url"
+                      disabled={isPending}
+                      {...field}
+                      className="focus:ring-0 focus:ring-0 h-[40px] rounded-[8px]"
+                      required
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+          <Button
+            type="submit"
+            disabled={isPending}
+            className="w-fit bg-[#006bff] rounded-full h-[40px] hover:bg-[#004eba] cursor-pointer disabled:opacity-50"
+          >
+            Запланировать событие
+          </Button>
         </div>
-        <div className="flex flex-col gap-2">
-          <Label>Email *</Label>
-          <Input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, email: e.target.value }))
-            }
-            className="focus:ring-0 focus:ring-0 h-[40px] rounded-[8px]"
-            required
-          />
-        </div>
-        <div className="flex flex-col gap-2">
-          <Label>Телефон *</Label>
-          <Input
-            type="phone"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={(e) =>
-              setFormData((prev) => ({ ...prev, phone: e.target.value }))
-            }
-            className="focus:ring-0 focus:ring-0 h-[40px] rounded-[8px]"
-            required
-          />
-        </div>
-        <Button
-          disabled={!!errors}
-          onClick={() => alert()}
-          className="w-fit bg-[#006bff] rounded-full h-[40px] hover:bg-[#004eba]"
-        >
-          Запланировать событие
-        </Button>
-      </div>
-    </form>
+      </form>
+    </Form>
   );
 };

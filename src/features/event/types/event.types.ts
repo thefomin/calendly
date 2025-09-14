@@ -1,6 +1,11 @@
+import { AvailabilitiesDto } from "./availabilities.types";
+
 export interface EventDto {
+  id: string;
   title: string;
-  description: string;
+  companyName: string;
+  description?: string;
   duration: number;
   ownerId: string;
+  availabilities: AvailabilitiesDto[];
 }

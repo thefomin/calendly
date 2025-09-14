@@ -1,15 +1,21 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import { App } from "./app";
 import { ROUTES } from "@/shared/model/routes";
 import { Providers } from "./providers";
+import NotFound from "./not-found";
+import { Layout } from "lucide-react";
+import { LayoutRoot } from "./layout";
 
 export const router = createBrowserRouter([
   {
     element: (
       <Providers>
-        <App />
+        <LayoutRoot>
+          <App />
+        </LayoutRoot>
       </Providers>
     ),
+    errorElement: <NotFound />,
     children: [
       {
         // loader: protectedLoader,
@@ -22,6 +28,10 @@ export const router = createBrowserRouter([
           {
             path: ROUTES.DATE,
             lazy: () => import("@/features/event/pages/event-id.page"),
+          },
+          {
+            path: ROUTES.INVITEES,
+            lazy: () => import("@/features/event/pages/invitees.page"),
           },
           //   {
           //     path: ROUTES.RECENT_BOARDS,
@@ -43,10 +53,10 @@ export const router = createBrowserRouter([
       //     path: ROUTES.REGISTER,
       //     lazy: () => import("@/features/auth/register.page"),
       //   },
-      //   {
-      //     path: ROUTES.HOME,
-      //     loader: () => redirect(ROUTES.BOARDS),
-      //   },
+      {
+        path: ROUTES.HOME,
+        lazy: () => import("@/features/event/pages/home.page"),
+      },
     ],
   },
 ]);
