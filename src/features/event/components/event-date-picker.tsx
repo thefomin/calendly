@@ -61,12 +61,13 @@ export const EventDatePicker = ({ event }: { event: EventDto }) => {
         />
       </div>
       <div className="w-[45%] flex flex-col gap-3 text-base font-normal">
+        {selectedSlots.length !== 0 && (
         <h3 className="leading-[38px] mb-2.5 normal-case">
           {date
             ? useCapitalizeFirst(format(date, "EEEE, d MMMM", { locale: ru }))
             : "Выберите дату"}
         </h3>
-
+)}
         {selectedSlots.map((slot) => (
           <DateList
             key={slot.id}

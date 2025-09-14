@@ -5,14 +5,15 @@ import { Providers } from "./providers";
 import NotFound from "./not-found";
 import { Layout } from "lucide-react";
 import { LayoutRoot } from "./layout";
+import { Header } from "@/shared/ui";
 
 export const router = createBrowserRouter([
   {
     element: (
       <Providers>
-        <LayoutRoot>
+          <Header/>
           <App />
-        </LayoutRoot>
+        
       </Providers>
     ),
     errorElement: <NotFound />,
